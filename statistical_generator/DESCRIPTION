@@ -1,0 +1,10 @@
+Package: StatisticalGenerator
+Type: Package
+Title: Generate statistical data using R
+Version: 0.0.0.1
+Author: aleDsz
+Maintainer: Alexandre de Souza <alexandre@aledsz.com.br>
+Description: Generate statistical data using R and it can be portted to another programming language
+License: MIT
+Encoding: UTF-8
+LazyData: true
