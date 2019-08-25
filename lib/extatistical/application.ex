@@ -1,20 +1,30 @@
 defmodule Extatistical.Application do
-  # See https://hexdocs.pm/elixir/Application.html
-  # for more information on OTP Applications
   @moduledoc false
-
   use Application
+  import Supervisor.Spec
+  require Logger
 
-  def start(_type, _args) do
-    # List all child processes to be supervised
-    children = [
-      # Starts a worker by calling: Extatistical.Worker.start_link(arg)
-      # {Extatistical.Worker, arg}
-    ]
+  alias Extatistical.Utils.Environments
 
-    # See https://hexdocs.pm/elixir/Supervisor.html
-    # for other strategies and supported options
-    opts = [strategy: :one_for_one, name: Extatistical.Supervisor]
-    Supervisor.start_link(children, opts)
+  def start(_type, _args), do: Supervisor.start_link(children(), opts())
+
+  defp children(), do: [
+    supervisor(Extatistical.Repo, []),
+    {Plug.Cowboy, scheme: :http, plug: Extatistical.Endpoint, options: get_config()}
+  ]
+
+  defp opts(), do: [
+    strategy: :one_for_one,
+    name: Extatistical.Supervisor
+  ]
+
+  defp get_config() do
+    Logger.info("[#{__MODULE__}] Starting Extatistical application")
+
+    with {:ok, [port: port] = config} <- Application.fetch_env(:extatistical, Extatistical.Endpoint) do
+      port = Environments.get_env(port)
+      Logger.info("[#{__MODULE__}] Starting server using port #{port}")
+      config
+    end
   end
 end
