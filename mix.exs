@@ -4,14 +4,15 @@ defmodule Extatistical.MixProject do
   def project do
     [
       app: :extatistical,
-      version: "0.1.0",
+      version: "1.0.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      elixirc_paths: elixirc_paths(Mix.env),
+      deps: deps(),
+      aliases: aliases()
     ]
   end
 
-  # Run "mix help compile.app" to learn about applications.
   def application do
     [
       extra_applications: [:logger],
@@ -19,7 +20,9 @@ defmodule Extatistical.MixProject do
     ]
   end
 
-  # Run "mix help deps" to learn about dependencies.
+  defp elixirc_paths(:test), do: ["lib", "test/support"]
+  defp elixirc_paths(_), do: ["lib"]
+
   defp deps do
     [
       # API
@@ -34,6 +37,10 @@ defmodule Extatistical.MixProject do
       {:ecto_sql, "~> 3.1"}
     ]
   end
+
+  defp aliases do
+    [
+      setup: ["ecto.drop --quiet", "ecto.create --quiet", "ecto.migrate --quiet", "run priv/repo/seeds.exs"]
     ]
   end
 end
